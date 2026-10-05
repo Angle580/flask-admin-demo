@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>{% block title %}管理后台{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Admin 后台</h2>
+    <nav>
+      <a href="{{ url_for('dashboard') }}">📊 数据看板</a>
+      <a href="{{ url_for('employees') }}">👥 员工管理</a>
+      <a href="{{ url_for('orders') }}">📦 订单管理</a>
+      {% if session.get('role') == 'admin' %}
+      <a href="{{ url_for('users') }}">🔐 用户管理</a>
+      {% endif %}
+      <a href="{{ url_for('logout') }}">🚪 退出登录</a>
+    </nav>
+    <div class="who">当前：{{ session.get('username') }}（{{ session.get('role') }}）</div>
+  </aside>
+  <main class="content">
+    {% with messages = get_flashed_messages() %}
+      {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+    {% endwith %}
+    {% block body %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>

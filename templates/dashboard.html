@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}数据看板{% endblock %}
+{% block body %}
+<h1>数据看板</h1>
+<div class="cards">
+  <div class="card"><div class="num">{{ total_users }}</div><div>用户总数</div></div>
+  <div class="card"><div class="num">{{ total_emps }}</div><div>员工总数</div></div>
+  <div class="card"><div class="num">¥{{ total_salary }}</div><div>月工资总额</div></div>
+  <div class="card"><div class="num">{{ total_orders }}</div><div>订单总数</div></div>
+</div>
+<h2>近6个月销售趋势（万元）</h2>
+<canvas id="chart" height="100"></canvas>
+<script>
+const sales = {{ sales | tojson }};
+new Chart(document.getElementById('chart'), {
+  type: 'line',
+  data: {
+    labels: sales.map(s => s.month),
+    datasets: [{ label: '销售额(万)', data: sales.map(s => s.amount),
+      borderColor: '#4f6ef7', backgroundColor: 'rgba(79,110,247,.15)', fill: true, tension: .3 }]
+  },
+  options: { responsive: true }
+});
+</script>
+{% endblock %}

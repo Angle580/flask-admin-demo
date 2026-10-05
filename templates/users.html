@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}用户管理{% endblock %}
+{% block body %}
+<h1>用户管理</h1>
+<table>
+  <thead><tr><th>ID</th><th>用户名</th><th>角色</th><th>创建时间</th><th>操作</th></tr></thead>
+  <tbody>
+  {% for u in users %}
+    <tr>
+      <td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.role }}</td><td>{{ u.created_at }}</td>
+      <td>
+        <form method="post" action="{{ url_for('user_delete', uid=u.id) }}"
+              onsubmit="return confirm('确认删除？')" style="display:inline">
+          <button class="btn-danger">删除</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<h2>新增用户</h2>
+<form class="inline-form" method="post" action="{{ url_for('user_add') }}">
+  <input name="username" placeholder="用户名" required>
+  <input name="password" placeholder="密码" required>
+  <select name="role">
+    <option value="user">普通用户</option>
+    <option value="admin">管理员</option>
+  </select>
+  <button type="submit">添加</button>
+</form>
+{% endblock %}

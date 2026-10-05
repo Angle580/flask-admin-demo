@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}订单管理{% endblock %}
+{% block body %}
+<h1>订单管理</h1>
+<div class="filter">
+  状态：
+  <a href="{{ url_for('orders') }}">全部</a>
+  {% for s in statuses %}
+    <a href="{{ url_for('orders', status=s) }}" class="{{ 'active' if s==cur_status }}">{{ s }}</a>
+  {% endfor %}
+</div>
+<table>
+  <thead><tr><th>订单号</th><th>客户</th><th>商品</th><th>金额</th><th>状态</th><th>下单时间</th><th>操作</th></tr></thead>
+  <tbody>
+  {% for o in orders %}
+    <tr>
+      <td>{{ o.order_no }}</td><td>{{ o.customer }}</td><td>{{ o.product }}</td>
+      <td>¥{{ o.amount }}</td>
+      <td><span class="status status-{{ o.status }}">{{ o.status }}</span></td>
+      <td>{{ o.created_at }}</td>
+      <td>
+        <form method="post" action="{{ url_for('order_status', oid=o.id) }}" style="display:inline">
+          <select name="status" onchange="this.form.submit()">
+            {% for s in ['待付款','已付款','已完成','已取消'] %}
+              <option value="{{ s }}" {{ 'selected' if s==o.status }}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        <form method="post" action="{{ url_for('order_delete', oid=o.id) }}"
+              onsubmit="return confirm('确认删除？')" style="display:inline">
+          <button class="btn-danger">删</button>
+        </form>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<div class="pager">
+  {% if page > 1 %}<a href="{{ url_for('orders', page=page-1, status=cur_status) }}">上一页</a>{% endif %}
+  第 {{ page }} / {{ total_pages }} 页
+  {% if page < total_pages %}<a href="{{ url_for('orders', page=page+1, status=cur_status) }}">下一页</a>{% endif %}
+</div>
+<h2>新增订单</h2>
+<form class="inline-form" method="post" action="{{ url_for('order_add') }}">
+  <input name="customer" placeholder="客户名" required>
+  <input name="product" placeholder="商品" required>
+  <input name="amount" placeholder="金额" type="number" step="0.01" required>
+  <select name="status">
+    <option>待付款</option><option>已付款</option><option>已完成</option><option>已取消</option>
+  </select>
+  <button type="submit">添加</button>
+</form>
+{% endblock %}
